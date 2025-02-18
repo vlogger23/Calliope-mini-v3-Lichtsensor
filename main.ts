@@ -1,40 +1,11 @@
-let isActive = false;
-const LIGHT_THRESHOLD = 100;
-const BLINK_INTERVAL = 500;
-
-basic.forever(() => {
-    const light = input.lightLevel();
-
-    if (light > LIGHT_THRESHOLD && !isActive) {
-        isActive = true;
-        control.inBackground(() => {
-            let ledsOn = false;
-            while (isActive) {
-                // Explizite LED-Steuerung statt Toggle
-                if (ledsOn) {
-                    basic.clearScreen();
-                } else {
-                    basic.showLeds(`
-                        # # # # #
-                        # # # # #
-                        # # # # #
-                        # # # # #
-                        # # # # #
-                    `);
-                }
-                ledsOn = !ledsOn;
-
-                // Ton im Hintergrund abspielen (nicht-blockierend)
-                control.inBackground(() => {
-                    music.playTone(440, 100);
-                });
-
-                basic.pause(BLINK_INTERVAL);
-            }
-            basic.clearScreen(); // Sicherstellen, dass LEDs aus sind
-        });
+basic.forever(function () {
+    if (input.lightLevel() > 100) {
+        basic.showIcon(IconNames.No)
+        music.playMelody("C5 B A G F E D C ", 120)
+        basic.pause(500)
+        basic.clearScreen()
+        basic.pause(500)
+    } else {
+        basic.clearScreen()
     }
-    else if (light <= LIGHT_THRESHOLD) {
-        isActive = false;
-    }
-});
+})
